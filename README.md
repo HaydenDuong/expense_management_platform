@@ -279,37 +279,36 @@ This milestone does not implement business features yet. It establishes the tech
 - Use Serilog for structured logging.
 - Use Problem Details for standardized API errors.
 
-#### Tasks
-
+## Tasks
 Project Setup
-- [ ] Create ASP.NET Core Web API project
-- [ ] Define solution/project structure
-- [ ] Add environment-based configuration
-- [ ] Add dependency injection conventions
+- [x] Create ASP.NET Core Web API project
+- [x] Define solution/project structure
+- [x] Add environment-based configuration
+- [x] Add dependency injection conventions      [Foundation skeleton for later stages as well]
 
 Database
-- [ ] Add PostgreSQL connection
-- [ ] Configure EF Core DbContext
-- [ ] Create initial migration
-- [ ] Add database health check
+- [x] Add PostgreSQL connection
+- [x] Configure EF Core DbContext class
+- [ ] Create initial migration [Delay to Stage 2]
+- [x] Add database health check
 
 API Foundation
-- [ ] Add Swagger/OpenAPI
-- [ ] Add global exception middleware
-- [ ] Add Problem Details responses
-- [ ] Add request validation foundation
-- [ ] Add API versioning
+- [x] Add Swagger/OpenAPI
+- [x] Add global exception middleware (app.UseExceptionHandler() is a global exception middleware)
+- [x] Add Problem Details responses
+- [ ] Add request validation foundation [Delay until first request DTO in Auth module]
+- [ ] Add API versioning  [Delay until business endpoints exist]
 
 Observability
-- [ ] Add Serilog
-- [ ] Add console logging
-- [ ] Add correlation/request ID logging
-- [ ] Add health endpoint
+- [x] Add Serilog
+- [x] Add console logging
+- [ ] Add correlation/request ID logging    [Delay to later stages]
+- [x] Expose /health endpoint
 
 Local Development
-- [ ] Add Dockerfile
-- [ ] Add docker-compose for API and PostgreSQL
-- [ ] Add README setup instructions
+- [ ] Add Dockerfile [Delay until deployment / containerized API stage]
+- [x] Add docker-compose for PostgreSQL
+- [x] Add README setup instructions
 
 #### Definition of Done:
 - API starts locally.
