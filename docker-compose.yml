@@ -1,0 +1,19 @@
+name: expense-management-platform
+services:
+  db:
+    image: postgres:16
+    container_name: expense-management-db
+
+    # Order of "environment" & "ports" can be interchange
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    

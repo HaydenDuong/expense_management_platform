@@ -1,0 +1,16 @@
+# Build Outputs
+bin/
+obj/
+
+# User-specific / IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# Local secrets
+.env
