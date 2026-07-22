@@ -21,6 +21,9 @@ builder.Host.UseSerilog((context, LoggerConfiguration) =>
 });
 
 // Add services to the container.
+// Register Controllers to handle HTTP Requests
+builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -36,6 +39,8 @@ app.UseExceptionHandler();
 
 // Logs each HTTP request with method, path, status code, and elapse time.
 app.UseSerilogRequestLogging();
+
+app.MapControllers();
 
 // Testing for Serilog with this startup log
 Log.Information("Starting Expense Management API in {Environment} environment", app.Environment.EnvironmentName);

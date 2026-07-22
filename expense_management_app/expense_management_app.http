@@ -1,6 +1,10 @@
 @expense_management_app_HostAddress = http://localhost:5089
 
-GET {{expense_management_app_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{expense_management_app_HostAddress}}/auth/register
+Content-Type: application/json
 
+{
+    "email": "abc123@example.com",
+    "password": "SomethingStrong@123"
+}
 ###

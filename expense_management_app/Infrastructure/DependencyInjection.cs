@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using expense_management_app.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
+using expense_management_app.Models;
 
 namespace expense_management_app.Infrastructure;
 
@@ -31,6 +33,8 @@ public static class DependencyInjection
             .AddHealthChecks()
             .AddDbContextCheck<AppDbContext>();
         
+        services.AddScoped<PasswordHasher<AppUser>>();
+
         return services;
     }
 }
