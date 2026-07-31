@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using expense_management_app.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using expense_management_app.Models;
+using expense_management_app.Options;
+using expense_management_app.Services;
 
 namespace expense_management_app.Infrastructure;
 
@@ -33,7 +35,17 @@ public static class DependencyInjection
             .AddHealthChecks()
             .AddDbContextCheck<AppDbContext>();
         
+        // Register ASP.NET Core PasswordHasher
         services.AddScoped<PasswordHasher<AppUser>>();
+
+        // Register Jwt Service
+        services.Configure<JwtOptions>(
+            configuration.GetSection("Jwt")
+        );
+
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
         return services;
     }

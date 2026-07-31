@@ -1,5 +1,6 @@
 @expense_management_app_HostAddress = http://localhost:5089
 
+### Registeration Method Testing
 POST {{expense_management_app_HostAddress}}/auth/register
 Content-Type: application/json
 
@@ -7,4 +8,50 @@ Content-Type: application/json
     "email": "abc123@example.com",
     "password": "SomethingStrong@123"
 }
-###
+
+### Login Method Testing
+#### A - Correct Credentials
+POST {{expense_management_app_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "abc123@example.com",
+    "password": "SomethingStrong@123"
+}
+
+#### B - Wrong Password
+POST {{expense_management_app_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "abc123@example.com",
+    "password": "qwerty"
+}
+
+#### C - Incorrect Credentials (both email & password)
+POST {{expense_management_app_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "def@example.com",
+    "password": "qwerty"
+}
+
+### Refresh Token Rotation Testing
+POST {{expense_management_app_HostAddress}}/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "tEvOi+/Xlo8dtM9bpaJOler8n6QZ94b8fb9CWNXeo0yP6A/7Kb/ZeqsQdQfEPt06plftw+QQLXepOS0Hviciag=="
+
+    // Unrevoked RefreshToken:
+    // "refreshToken": "cVnd0XdH8HfTnWSdP0OmgSLti0otZclgamgqCCLGRLmj8/hN6Oet2/4/oLn080ExVVjcLMO3UurRW1b0KyaJKA=="
+}
+
+### Logout Testing
+POST  {{expense_management_app_HostAddress}}/auth/logout
+Content-Type: application/json
+
+{
+    "refreshToken": "cVnd0XdH8HfTnWSdP0OmgSLti0otZclgamgqCCLGRLmj8/hN6Oet2/4/oLn080ExVVjcLMO3UurRW1b0KyaJKA=="
+}
