@@ -6,6 +6,7 @@ public class LoginRequest
 {
     [Required]
     [EmailAddress]
+    [MaxLength(320)]
     public string Email { get; set; } = string.Empty;
 
     [Required]

@@ -55,3 +55,7 @@ Content-Type: application/json
 {
     "refreshToken": "cVnd0XdH8HfTnWSdP0OmgSLti0otZclgamgqCCLGRLmj8/hN6Oet2/4/oLn080ExVVjcLMO3UurRW1b0KyaJKA=="
 }
+
+### Authorization Testing
+GET {{expense_management_app_HostAddress}}/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhYmMxMjNAZXhhbXBsZS5jb20iLCJqdGkiOiIyOTNiNzAyZi0yZWEyLTQ3N2UtOWIxNy1lMjJjMzBjYjI4OTYiLCJleHAiOjE3ODU0ODQzNzQsImlzcyI6IkV4cGVuc2VNYW5hZ2VtZW50QXBpIiwiYXVkIjoiRXhwZW5zZU1hbmFnZW1lbnRDbGllbnQifQ.dqMPKcc2iHdwMJAYMG16_tFyJeQT_YAjEYbkb1HSVbY

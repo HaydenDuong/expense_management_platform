@@ -7,6 +7,9 @@ using expense_management_app.Models;
 using expense_management_app.Infrastructure.Persistence;
 using expense_management_app.Services;
 using expense_management_app.Options;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace expense_management_app.Controllers;
 
@@ -265,5 +268,63 @@ public class AuthController : ControllerBase
         _logger.LogInformation("Refresh token is revoked for this user id {UserId}", storedRefreshToken.AppUserId);
 
         return NoContent();
+    }
+
+    // Authorization HTTP endpoint
+    // ControllerBase gives AuthController access to the following HTTP request properties:
+    // User, Request, Response, HttpContext, ModelState
+    // This endpoint does not take a request DTO.
+    // The caller's identity comes from the Authorization header:
+    //
+    // Authorization: Bearer <accessToken>
+    //
+    // ASP.NET Core JWT middleware validates the token before this action runs.
+    // If the token is valid, it creates HttpContext.User from the JWT claims.
+    // Because AuthController inherits from ControllerBase, we can access HttpContext.User as User.
+    // The "sub" claim contains the AppUser.Id that was written when the access token was generated.
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<ActionResult<AuthUserResponse>> Me()
+    {
+        // Because the current code of JWT Service created claim as:
+        // new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
+        // [Cont.] from above: User being used here is shorthanded for HttpContext.User - a ClaimsPrincipal
+        // A "ClaimsPrincipal" represents the authenticated caller
+        // The flow is:
+        // 1. Client sends Authorization: Bearer <access token>
+        // 2. JWT middleware validates token
+        // 3. Middleware creates a ClaimsPrincipal from the token claims
+        // 4. Middleware sets HttpContext.User ~ JWT creates this latter and it contains claims & it exists only for this request
+        // 5. Controller action reads "HttpContext.User" (which is User)
+        // so the following code means: Look at the authenticated caller's claims and find the claim named "sub"
+        var userIdValue = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+        // Validity Check
+        if (!int.TryParse(userIdValue, out var userId))
+        {
+            _logger.LogWarning("Authenticated request rejected because the subject claim was missing or invalid.");
+            return Unauthorized();
+        }
+
+        // Find this user from the DB, instead of only trusting the token
+        // Because this user might have been deleted / disabled / changed.
+        // For a production-shaped app, it's reasonable for "/auth/me" to fetch the current user data.
+        var user = await _context.AppUsers.FindAsync(userId);
+
+        if (user is null)
+        {
+            _logger.LogWarning("Authenticated request rejected because user id {UserId} was not found.", userId);
+            return Unauthorized();
+        }
+
+        var response = new AuthUserResponse
+        {
+            Id = user.Id,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt
+        };
+
+        _logger.LogWarning("Current user profile returned for user id {UserId}.", user.Id);
+        return Ok(response);
     }
 }

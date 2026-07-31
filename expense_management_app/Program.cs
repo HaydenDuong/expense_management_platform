@@ -40,6 +40,20 @@ app.UseExceptionHandler();
 // Logs each HTTP request with method, path, status code, and elapse time.
 app.UseSerilogRequestLogging();
 
+// When this application is running inside Docker container, then skip HTTPS redirection
+// Else, keep HTTPS redirection when running locally on local machine
+if (!builder.Configuration.GetValue<bool>("DOTNET_RUNNING_IN_CONTAINER"))
+{
+    app.UseHttpsRedirection();
+}
+
+// Read token and create HttpContext.User
+app.UseAuthentication();
+
+// enforce [Authorize]
+app.UseAuthorization();
+
+// Route requests to controller actions
 app.MapControllers();
 
 // Testing for Serilog with this startup log
@@ -57,20 +71,12 @@ app.MapGet("/throw", () =>
 // This is marked to complete to task "Expose /health endpoint"
 app.MapHealthChecks("/health");
 
-
 // Configure the HTTP request pipeline.
 // Test with: https://localhost:7273/openapi/v1.json
 //        or  http://localhost:5089/openapi/v1.json
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-}
-
-// When this application is running inside Docker container, then skip HTTPS redirection
-// Else, keep HTTPS redirection when running locally on local machine
-if (!builder.Configuration.GetValue<bool>("DOTNET_RUNNING_IN_CONTAINER"))
-{
-    app.UseHttpsRedirection();
 }
 
 app.Run();
