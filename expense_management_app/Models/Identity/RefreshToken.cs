@@ -1,4 +1,4 @@
-namespace expense_management_app.Models;
+namespace expense_management_app.Models.Identity;
 
 public class RefreshToken
 {

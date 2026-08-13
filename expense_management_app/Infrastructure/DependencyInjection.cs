@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using expense_management_app.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
-using expense_management_app.Models;
+using expense_management_app.Models.Identity;
 using expense_management_app.Options;
 using expense_management_app.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

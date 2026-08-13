@@ -1,4 +1,4 @@
-using expense_management_app.Models;
+using expense_management_app.Models.Identity;
 
 namespace expense_management_app.Services;
 

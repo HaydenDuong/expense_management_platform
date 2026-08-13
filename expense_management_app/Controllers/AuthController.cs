@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity; // Password Hasher Dependecy
 using Microsoft.Extensions.Options;
 using expense_management_app.Contracts.Auth;
-using expense_management_app.Models;
+using expense_management_app.Models.Identity;
 using expense_management_app.Infrastructure.Persistence;
 using expense_management_app.Services;
 using expense_management_app.Options;
@@ -17,7 +17,7 @@ namespace expense_management_app.Controllers;
 [Route("auth")]
 public class AuthController : ControllerBase
 {
-    // Dependecies
+    // Dependencies
     private readonly AppDbContext _context;
     private readonly PasswordHasher<AppUser> _passwordHasher;
     private readonly ILogger<AuthController> _logger;

@@ -1,12 +1,15 @@
 # Milestone 2 - Identity and Authentication
 
 ## Goal
+
 Allow users to create an account, authenticate securely, refresh sessions, and access protected API endpoints.
 
 ## Scope
+
 This milestone introduces user identity but does not include profile management, roles beyond a basic authenticated user, or email delivery unless added as optional work.
 
 ## Learning Objectives
+
 - Password hashing
 - JWT access tokens
 - Refresh token lifecycle
@@ -15,6 +18,7 @@ This milestone introduces user identity but does not include profile management,
 - Secure authentication API design
 
 ## Business Requirements
+
 - A user can register with email and password.
 - A user can log in and receive an access token and refresh token.
 - A user can refresh an expired access token.
@@ -23,6 +27,7 @@ This milestone introduces user identity but does not include profile management,
 - Passwords are never stored in plain text.
 
 ## API Endpoints
+
 - [x] `POST /auth/register`
 - [x] `POST /auth/login`
 - [ ] `POST /auth/refresh`
@@ -30,34 +35,37 @@ This milestone introduces user identity but does not include profile management,
 - [ ] `GET /auth/me`
 
 ## Data Model
+
 User
-- Id
-- Email
-- PasswordHash
-- CreatedAt
-- UpdatedAt
+    - Id
+    - Email
+    - PasswordHash
+    - CreatedAt
+    - UpdatedAt
 
 RefreshToken
-- Id
-- UserId
-- TokenHash
-- ExpiresAt
-- RevokedAt
-- CreatedAt
+    - Id
+    - UserId
+    - TokenHash
+    - ExpiresAt
+    - RevokedAt
+    - CreatedAt
 
 ## Tasks
+
 - [x] Create User entity
 - [x] Create RefreshToken entity
 - [x] Add registration flow
 - [x] Add login flow
 - [x] Add JWT generation
-- [ ] Add refresh token rotation
-- [ ] Add logout/revoke token flow
-- [ ] Add authenticated test endpoint
-- [ ] Add validation for auth requests
+- [x] Add refresh token rotation
+- [x] Add logout/revoke token flow
+- [x] Add authenticated test endpoint
+- [x] Add validation for auth requests
 - [ ] Add unit/integration tests for core auth flows
 
 ## Definition of Done
+
 - A new user can register.
 - A registered user can log in.
 - JWT-protected endpoints reject unauthenticated requests.
@@ -67,21 +75,22 @@ RefreshToken
 ## Notes
 
 ### Check Docker compose PostgreSQL DB container
+
     docker exec -it expense-management-db psql -U postgres -d ExpenseManagementDB
     SELECT * FROM "AppUsers";
     SELECT * FROM "RefreshTokens";
 
 ### Create "AppUser" and "RefreshToken" entities:
-Mental model for:
 
-When a user registers:
-    1. Accept email and password.
-    2. Validate email format and password requirements.
-    3. Normalize email, usually lowercase / trim.
-    4. Check whether this email already exists (User.email will be used for unique index in PostgreSQL).
-    5. Hash the password using password hasher.
-    6. Store "User" object in "User" Table in PostgreSQL.
-    7. Return success code without exposing PasswordHash.
+Mental model for:
+    When a user registers:
+        1. Accept email and password.
+        2. Validate email format and password requirements.
+        3. Normalize email, usually lowercase / trim.
+        4. Check whether this email already exists (User.email will be used for unique index in PostgreSQL).
+        5. Hash the password using password hasher.
+        6. Store "User" object in "User" Table in PostgreSQL.
+        7. Return success code without exposing PasswordHash.
 
 When a user logs in:
     1. Accept email and password.
@@ -98,39 +107,35 @@ When a user logs in:
 
 Current schema for "AppUser" object to be stored:
 AppUser
-- Id
-- Email
-- NormalizedEmail
-- PasswordHash
-- EmailConfirmedAt [placeholder at the moment]
-- CreatedAt
-- UpdatedAt
+    - Id
+    - Email
+    - NormalizedEmail
+    - PasswordHash
+    - EmailConfirmedAt [placeholder at the moment]
+    - CreatedAt
+    - UpdatedAt
 
 Refresh tokens will be stored in another table that dedicated to it, because one user can have multiple active sessions (laptop, phone, browser)
 If refresh token lived directly on "User" object, then that could only represent one session => Logging on different device might overwrite the current device session.
 RefreshToken
-- Id
-- AppUserId                 [ The ID stored in the DB]
-- Class AppUser AppUser     [ The full "AppUser" object loaded in C#]
-    public AppUser AppUser { get; set; } = null!;
-    "null!" was used, because: 
-        This is a navigation property - it is a relationship metadata
-        Do not send "nullable warning" as "!" = null-forgiving operator.
-        This does not make the value non-null at runtime
-        We used it here because this property is for EF Navigation:
-            The DB relationship is enforced by "AppUserId"
-            EF can load "AppUser" later
-            Create a token may only need "AppUserId"
-            => C# nullable warnings stay quiet
-    // "required" was not, because this property is not expect application code to provide every time
-
-
-- TokenHash
-- CreatedAt
-- ExpiresAt
-- RevokedAt
-
-
+    - Id
+    - AppUserId                 [ The ID stored in the DB]
+    - Class AppUser AppUser     [ The full "AppUser" object loaded in C#]
+        public AppUser AppUser { get; set; } = null!;
+            "null!" was used, because:
+                This is a navigation property - it is a relationship metadata
+                Do not send "nullable warning" as "!" = null-forgiving operator.
+                This does not make the value non-null at runtime
+                We used it here because this property is for EF Navigation:
+                    The DB relationship is enforced by "AppUserId"
+                    EF can load "AppUser" later
+                    Create a token may only need "AppUserId"
+                    => C# nullable warnings stay quiet
+            // "required" was not, because this property is not expect application code to provide every time
+    - TokenHash
+    - CreatedAt
+    - ExpiresAt
+    - RevokedAt
 
 AppUsers table
 
@@ -214,7 +219,6 @@ Created:
     Contracts/Auth/
         RegisterRequest.cs
         AuthUserResponse.cs
-    
     Controllers/
         AuthController.cs
 
@@ -311,6 +315,7 @@ For preference, a more production-shaped version will have the followings:
     - unique index exists or duplicate insert fails
 
 ### Add Login flow
+
 Added a request DTO in: "/Contracts/Auth/LoginRequest.cs"
 
 Noted, during authentication tests:
@@ -376,6 +381,7 @@ Noted, during authentication tests:
             - VerifyPasswordEvenIfUserMissing(...)
 
 ### Add JWT generation
+
 Goal: After successful login, return a short-lived access token that proves who the user is
 
 A JWT is not "the login". Login verifies credentials. JWT is the receipt the client uses after login
@@ -531,7 +537,6 @@ Concept: this process has 2 phases
         - Creat refresh token.
         - Store hashed refresh token in DB.
         - Return raw refresh token to client once.
-    
     Refresh:
         - client sends old refresh token.
         - Server hashes it and finds DB row
@@ -547,7 +552,6 @@ Mental Model:
         - JWT
         - Not stored in DB
         - Used for API requests.
-    
     Refresh Token:
         - Longer-lived.
         - Random opaque string.
@@ -555,7 +559,6 @@ Mental Model:
         - Used only to get new token.
         - Can be revoked.
         - Rotated on every refresh.
-    
 Refresh token hashing can be used with SHA-256 because this token are random high-entropy values.
     It should be generated from secure random bytes.
 
@@ -564,10 +567,8 @@ Passwords need to be hashed with bcrypt / Argon2 / PBKDF2.
 Added:
     In "appsettings.Development.json":
         "RefreshTokenDays": 30
-    
     In "/Options/JwtOptions.cs":
         "public int RefreshTokenDays { get; set; }"
-    
     In "/Contracts/Auth/AuthResponse.cs":
         "public string RefreshToken { get; set; }" = string.Empty;
 
@@ -586,6 +587,7 @@ Updated "/Controllers/AuthController.cs"
 ### Add revoke token flow / Logout
 
 #### Revoke Token Flow (Refresh Token Rotation)
+
 Created "/Contracts/Auth/RefreshRequest.cs"
 Added HttpPost /auth/refresh to "/Controllers/AuthController.cs":
     Login:
@@ -603,6 +605,7 @@ Added HttpPost /auth/refresh to "/Controllers/AuthController.cs":
     Meaning: a refreshToken will have a null value for its revokedAt property and will turn into a DateTime value after HttpPost /Auth/Refresh to rendering it into not active => allow new refreshToken to be created and save to the corresponding user.
 
 #### Logout = Refresh Token Revoked
+
 Added HttpPOST /auth/logout to "/Controller/AuthController.cs"
     The flow:
         1. Client sends refresh token.
@@ -612,8 +615,9 @@ Added HttpPOST /auth/logout to "/Controller/AuthController.cs"
         5. Set RevokedAt = now.
         6. Save changes.
         7. Return 204 No Content.
-        
+
 ### Add authenticated test endpoint
+
 This is the step where the access token becomes meaningful
 
 To do this, it is needed to wire JWT bearer authentication into ASP.NET Core:
@@ -622,5 +626,65 @@ To do this, it is needed to wire JWT bearer authentication into ASP.NET Core:
     3. Add [Authorize] to protected endpoints.
     4. Implement GET /auth/me using claims from the access token.
 
+Mental Model:
+When a client calls: GET /auth/me
+                     Authorization: Bearer ....
+
+ASP.NET Core should => Anything fails = 401 Unauthorized
+    1. Read the Authorization header.
+    2. Extract the Bear token.
+    3. Validate JWT signature.
+    4. Validate issuer.
+    5. Validate audience.
+    6. Validate expiry.
+    7. Convert JWT claims into HttpContext.User.
+    8. Allow [Authorize] endpoint to run.
+
+Steps:
+
+1. Added ASP.NET Core JWT bearer authentication support:
+    dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 10.0.10
+
+2. Register JWT Authentication in "/Infrastructure/DependencyInjection.cs"
+
+3. Added HTTP GET /auth/me to "/Controllers/AuthController.cs"
+    GET /auth/me does not receive a request DTO like LoginRequest or RefreshRequest.
+
+        For register/login/refresh/logout:
+        - The client sends JSON in the request body.
+        - ASP.NET Core model binding turns that JSON into a method parameter.
+        - Example: Login(LoginRequest request)
+
+        For /auth/me:
+        - The client sends the access token in the HTTP Authorization header.
+        - Example: Authorization: Bearer <accessToken>
+        - There is no JSON body.
+        - There is no request DTO.
+
+        Flow:
+        1. User logs in with email/password.
+        2. Server returns an access token.
+        3. Client calls GET /auth/me and puts the access token in the Authorization header.
+        4. ASP.NET Core authentication middleware reads the Authorization header.
+        5. The JWT bearer handler validates the token signature, issuer, audience, and expiry.
+        6. If valid, ASP.NET Core creates HttpContext.User from the JWT claims.
+        7. AuthController inherits from ControllerBase, so inside the controller we can access HttpContext.User as simply User.
+        8. The /auth/me endpoint reads the user id from the "sub" claim.
+        9. The server queries AppUsers by that id and returns AuthUserResponse.
+
+        Important:
+        - User in the controller is not the AppUser database entity.
+        - User is HttpContext.User, a ClaimsPrincipal created from the validated JWT.
+        - AppUser is the EF Core entity stored in PostgreSQL.
+
+        Why this is safer:
+        - /auth/me should not accept userId from the request body.
+        - A client could lie and send another user's id.
+        - Instead, the user id comes from the signed JWT claim.
+        - If a client changes the JWT claim, the signature validation fails.
+
 ### Add validation for auth requests
+
+Added [parameters] to Login / Logout / Refresh / Register Request.cs files
+
 ### Add unit/integration tests for core auth flows

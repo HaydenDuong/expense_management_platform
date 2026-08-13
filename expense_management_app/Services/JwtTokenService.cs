@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using expense_management_app.Models;
+using expense_management_app.Models.Identity;
 using expense_management_app.Options;
 
 namespace expense_management_app.Services;

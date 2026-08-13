@@ -1,6 +1,7 @@
 # Milestone 1 - Backend Foundation
 
 ## Goal
+
 Create a runnable ASP.NET Core backend foundation with:
     - A clean project structure.
     - Database connectivity.
@@ -8,9 +9,11 @@ Create a runnable ASP.NET Core backend foundation with:
     - Local development support.
 
 ## Scope
+
 This milestone does not implement business features yet. It establishes the technical base that future modules will build on.
 
 ## Learning Objectives
+
 - ASP.NET Core Web API Structure.
 - Dependency Injection.
 - EF Core with PostgreSQL.
@@ -20,6 +23,7 @@ This milestone does not implement business features yet. It establishes the tech
 - Docker-based local development
 
 ## Architecture Decisions
+
 - Use a modular monolith as the initial architecture.
 - Separate API, application, domain, and infrastructure concerns.
 - Use PostgreSQL as the primary relational database.
@@ -29,36 +33,37 @@ This milestone does not implement business features yet. It establishes the tech
 
 ## Tasks
 Project Setup
-- [x] Create ASP.NET Core Web API project
-- [x] Define solution/project structure
-- [x] Add environment-based configuration
-- [x] Add dependency injection conventions      [Foundation skeleton for later stages as well]
+    - [x] Create ASP.NET Core Web API project
+    - [x] Define solution/project structure
+    - [x] Add environment-based configuration
+    - [x] Add dependency injection conventions      [Foundation skeleton for later stages as well]
 
 Database
-- [x] Add PostgreSQL connection
-- [x] Configure EF Core DbContext class
-- [ ] Create initial migration [Delay to Stage 2]
-- [x] Add database health check
+    - [x] Add PostgreSQL connection
+    - [x] Configure EF Core DbContext class
+    - [ ] Create initial migration [Delay to Stage 2]
+    - [x] Add database health check
 
 API Foundation
-- [x] Add Swagger/OpenAPI
-- [x] Add global exception middleware (app.UseExceptionHandler() is a global exception middleware)
-- [x] Add Problem Details responses
-- [ ] Add request validation foundation [Delay until first request DTO in Auth module]
-- [ ] Add API versioning  [Delay until business endpoints exist]
+    - [x] Add Swagger/OpenAPI
+    - [x] Add global exception middleware (app.UseExceptionHandler() is a global exception middleware)
+    - [x] Add Problem Details responses
+    - [ ] Add request validation foundation [Delay until first request DTO in Auth module]
+    - [ ] Add API versioning  [Delay until business endpoints exist]
 
 Observability
-- [x] Add Serilog
-- [x] Add console logging
-- [ ] Add correlation/request ID logging    [Delay to later stages]
-- [x] Expose /health endpoint
+    - [x] Add Serilog
+    - [x] Add console logging
+    - [ ] Add correlation/request ID logging    [Delay to later stages]
+    - [x] Expose /health endpoint
 
 Local Development
-- [ ] Add Dockerfile [Delay until deployment / containerized API stage]
-- [x] Add docker-compose for PostgreSQL
-- [x] Add README setup instructions
+    - [ ] Add Dockerfile [Delay until deployment / containerized API stage]
+    - [x] Add docker-compose for PostgreSQL
+    - [x] Add README setup instructions
 
-## Definition of Done:
+## Definition of Done
+
 - API starts locally.
 - PostgreSQL runs through Docker.
 - EF Core can apply migrations.
@@ -68,6 +73,7 @@ Local Development
 
 ## Notes:
 A. Project Setup
+
 - Create a new ASP.NET Core Web API Project with: 
     dotnet new webapi -n expense_management_app --framework net10.0
 
@@ -90,10 +96,11 @@ A. Project Setup
 
 - Created "expense_management_app/Infrastructure/DependencyInjection.cs" and move both "services.AddDbContext<>();" & "services.AddHealthChecks().AddDbContext<AppDbContext>();" to it
     Infrastructure DI.cs file should be used to group services that are related to: database, storage, messaging, external services, file systems, cloud providers
-    
+
     Other services like: OpenAPI, Problem Details, endpoint behavior, HTTP concerns are belong to API foundation (HTTP presentation), thus, it should belong to a separate DI.cs file for API
 
 B. Database
+
 - Install Nuget packages for PostGreSQL:
     dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
     dotnet add package Microsoft.EntityFrameworkCore.Design
@@ -123,6 +130,7 @@ B. Database
                    (The port numbers are defined in /Properties/launchSettings.json)
 
 C. API Foundation
+
 - Problem Details = a standard JSON shape for API errors. Instead of returning random error trings, the API returns predictable responses like:
     {
         "type": "https://tools.ietf.org/html/rfc9110#section-15.6.1",
@@ -137,7 +145,7 @@ C. API Foundation
         builder.Services.AddProblemDetails(); - This registers the service that knows how to format error. Morelike, teaches ASP.NET Core how to format error responses
 
         app.UseExceptionHandler(); - This catches unhandled exceptions globally & turns them into Problem Details responses
-    
+
     In "Program.cs", added those two pieces and a temporary endpoint for testing it
         Added:
             "builder.Services.AddProblemDetails();"
@@ -153,15 +161,15 @@ C. API Foundation
             https://localhost:7273/throw
             http://localhost:5089/throw
 
-
 D. Observability
+
 - Default ASP.NET Core logging is fine, however, Serilog provides a better structured logs
 
     Installed:
         dotnet add package Serilog.AspNetCore       - integrates Serilog with ASP.NET Core
 
         dotnet add package Serilog.Sinks.Console    - lets Serilog write logs to te console
-    
+
     In "Program.cs": added:
         "builder.Host.UseSerilog(...);"
         "app.UseSerilogRequestLogging();"
@@ -195,11 +203,11 @@ D. Observability
                 // [13:20:02 INF] Request finished HTTP/2 GET https://localhost:7273/health - 200 null text/plain 272.6994ms
 
 E. Local Development
-- In "learning_projects/expense_management_platform/": added docker-compose.yml
-    Created PostgreSQL container with: docker compose up -d
-    Check container's info: docker ps
-    Ran container health check:
-        cd expense_management_app
-        dotnet run
-        Visit this url link with browser: http://localhost:5089/health
-                                    or    https://localhost:7273/health
+    - In "learning_projects/expense_management_platform/": added docker-compose.yml
+        Created PostgreSQL container with: docker compose up -d
+        Check container's info: docker ps
+        Ran container health check:
+            cd expense_management_app
+            dotnet run
+            Visit this url link with browser: http://localhost:5089/health
+                                        or    https://localhost:7273/health

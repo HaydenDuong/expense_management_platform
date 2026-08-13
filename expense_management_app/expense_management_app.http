@@ -1,4 +1,6 @@
 @expense_management_app_HostAddress = http://localhost:5089
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhYmMxMjNAZXhhbXBsZS5jb20iLCJqdGkiOiI5NjU5NThiZC05ZWI5LTQ3Y2QtYmYyYi1iY2I0Y2Q5YmIyNDQiLCJleHAiOjE3ODY2MDk2MTMsImlzcyI6IkV4cGVuc2VNYW5hZ2VtZW50QXBpIiwiYXVkIjoiRXhwZW5zZU1hbmFnZW1lbnRDbGllbnQifQ.xF_rt1EBoRpnjpS_TvCpRJyhLwepoNg1YDo9pS0YA1U
+@refreshToken = cs2/WWss87RZRG4z5xfUs8bE6voJqihToORMNMT1+8q1xF90g1KffIG+eF5NMjwoRRp7qG2K8/QKFur212EV1Q==
 
 ### Registeration Method Testing
 POST {{expense_management_app_HostAddress}}/auth/register
@@ -42,10 +44,7 @@ POST {{expense_management_app_HostAddress}}/auth/refresh
 Content-Type: application/json
 
 {
-    "refreshToken": "tEvOi+/Xlo8dtM9bpaJOler8n6QZ94b8fb9CWNXeo0yP6A/7Kb/ZeqsQdQfEPt06plftw+QQLXepOS0Hviciag=="
-
-    // Unrevoked RefreshToken:
-    // "refreshToken": "cVnd0XdH8HfTnWSdP0OmgSLti0otZclgamgqCCLGRLmj8/hN6Oet2/4/oLn080ExVVjcLMO3UurRW1b0KyaJKA=="
+    "refreshToken": "{{refreshToken}}"
 }
 
 ### Logout Testing
@@ -53,9 +52,84 @@ POST  {{expense_management_app_HostAddress}}/auth/logout
 Content-Type: application/json
 
 {
-    "refreshToken": "cVnd0XdH8HfTnWSdP0OmgSLti0otZclgamgqCCLGRLmj8/hN6Oet2/4/oLn080ExVVjcLMO3UurRW1b0KyaJKA=="
+    "refreshToken": "{{refreshToken}}"
 }
 
 ### Authorization Testing
 GET {{expense_management_app_HostAddress}}/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhYmMxMjNAZXhhbXBsZS5jb20iLCJqdGkiOiIyOTNiNzAyZi0yZWEyLTQ3N2UtOWIxNy1lMjJjMzBjYjI4OTYiLCJleHAiOjE3ODU0ODQzNzQsImlzcyI6IkV4cGVuc2VNYW5hZ2VtZW50QXBpIiwiYXVkIjoiRXhwZW5zZU1hbmFnZW1lbnRDbGllbnQifQ.dqMPKcc2iHdwMJAYMG16_tFyJeQT_YAjEYbkb1HSVbY
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### Testing with Categories.cs & Tags.cs
+#### A / Categories.cs
+#### Create a Category
+POST {{expense_management_app_HostAddress}}/categories
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "name": "work"
+}
+
+#### Retrieve all categories created by the current user
+GET {{expense_management_app_HostAddress}}/categories
+Authorization: Bearer {{accessToken}}
+Accept: application/json 
+
+#### B / Tags.cs
+#### Create a Tag
+POST {{expense_management_app_HostAddress}}/tags
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "name": "non-essential"
+}
+
+#### Retrieve all tags created by the current user
+GET {{expense_management_app_HostAddress}}/tags
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### Testing with ExpenseController.cs
+#### Create an expense for the current user
+POST {{expense_management_app_HostAddress}}/expenses
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "merchant": "woolworth",
+    "amount": 10.00,
+    "currency": "aud",
+    "expenseDate": "2026-08-10T00:00:00Z",
+    "categoryId":null,
+    "notes":null,
+    "tagIds":[]
+}
+
+#### Retrieve all expenses of this current user
+GET {{expense_management_app_HostAddress}}/expenses
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+#### Retrieve one expense of this current user based on expenseId
+GET {{expense_management_app_HostAddress}}/expenses/10
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+#### Delete one expense of this current user based on expenseId
+DELETE {{expense_management_app_HostAddress}}/expenses/1
+Authorization: Bearer {{accessToken}}
+
+#### Update one expense of this current user based on expenseId
+PUT {{expense_management_app_HostAddress}}/expenses/1
+Authorization: Bearer {{accessToken}}
+{
+    "merchant": "Aldi",
+    "amount": 20.00,
+    "currency": "usd",
+    "expenseDate": "2026-08-13T00:00:00Z",
+    "categoryId": 1,
+    "notes": "testing",
+    "tagIds": [1,2]
+}
