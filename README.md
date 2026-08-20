@@ -311,14 +311,14 @@ Project Setup
 Database
     - [x] Add PostgreSQL connection
     - [x] Configure EF Core DbContext class
-    - [ ] Create initial migration [Delay to Stage 2]
+    - [x] Create initial migration [Delay to Stage 2]
     - [x] Add database health check
 
 API Foundation
     - [x] Add Swagger/OpenAPI
     - [x] Add global exception middleware (app.UseExceptionHandler() is a global exception middleware)
     - [x] Add Problem Details responses
-    - [ ] Add request validation foundation [Delay until first request DTO in Auth module]
+    - [x] Add request validation foundation [Delay until first request DTO in Auth module]
     - [ ] Add API versioning  [Delay until business endpoints exist]
 
 Observability
@@ -552,7 +552,7 @@ This milestone focuses on user-owned expense records. Receipt upload, OCR, AI pa
     - [x] Validate file size.
     - [x] Validate file extension.
     - [x] Validate MIME type.
-    - [ ] Reject corrupted uploads
+    - [x] Reject corrupted uploads
 
     Database:
         Receipt
@@ -583,8 +583,6 @@ This milestone focuses on user-owned expense records. Receipt upload, OCR, AI pa
     - Receipt metadate saved.
     - File stored successfully.
     - Validation working.
-
-#### Notes
 
 ### Milestone 5 - Object Storage
 

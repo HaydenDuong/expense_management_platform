@@ -38,7 +38,7 @@
     - [x] Validate file size.
     - [x] Validate file extension.
     - [x] Validate MIME type.
-    - [ ] Reject corrupted uploads
+    - [x] Reject corrupted uploads
 
     Database:
         - [x]Receipt
