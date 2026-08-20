@@ -1,4 +1,5 @@
 using expense_management_app.Models.Expenses;
+using expense_management_app.Models.Receipts;
 
 namespace expense_management_app.Models.Identity;
 public class AppUser
@@ -16,4 +17,5 @@ public class AppUser
     public List<Expense> Expenses { get; set; } = [];
     public List<Category> Categories { get; set; } = [];
     public List<Tag> Tags { get; set; } = [];
+    public List<Receipt> Receipts { get; set; } = [];
 }

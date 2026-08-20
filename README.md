@@ -9,11 +9,13 @@ Instead of manually recording transactions, users can upload receipts, PDFs, or 
 The primary objective of this project is not only to build an expense tracker, but also to explore modern backend engineering practices including asynchronous processing, modular monolith architecture, cloud storage, AI integration, distributed messaging, and production-ready system design.
 
 ## Vision
+
 Build a production-ready backend platform capable of processing financial documents automatically while demonstrating enterprise backend architecture and engineering best practices.
 
 ## Project Goals
 
 ### Business Goals
+
 - Automate expense tracking.
 - Reduce manual data entry.
 - Generate spending analytics.
@@ -21,6 +23,7 @@ Build a production-ready backend platform capable of processing financial docume
 - Support AI-assisted financial insights.
 
 ### Engineering Goals
+
 - Learn scalable backend architecture and maintain system design.
 - Build maintainable modules.
 - Practice distributed systems.
@@ -31,6 +34,7 @@ Build a production-ready backend platform capable of processing financial docume
 - Increase test coverage.
 
 ## Tech Stack
+
 Candidate:
     - Language: C#
     - Framework: ASP.NET Core
@@ -110,149 +114,163 @@ Candidate:
 The platform is designed as a modular monolith. Each module owns its domain logic and data access boundaries, while sharing common infrastructure such as authentication, logging, persistence, and messaging.
 
 ### Identity Module
+
 Responsible for user accounts, authentication, authorization, refresh tokens, and user ownership rules.
 
 Core responsibilities:
-- User registration and login
-- Password hashing
-- JWT generation and validation
-- Refresh token lifecycle
-- Authenticated user context
+    - User registration and login
+    - Password hashing
+    - JWT generation and validation
+    - Refresh token lifecycle
+    - Authenticated user context
 
 ### Expense Module
+
 Responsible for manually created and AI-generated expense records.
 
 Core responsibilities:
-- Expense CRUD
-- Categories and tags
-- Expense validation
-- User-owned expense queries
-- Filtering, sorting, and pagination
+    - Expense CRUD
+    - Categories and tags
+    - Expense validation
+    - User-owned expense queries
+    - Filtering, sorting, and pagination
 
 ### Receipt Module
+
 Responsible for uploaded financial documents and their processing lifecycle.
 
 Core responsibilities:
-- Receipt upload
-- Receipt metadata
-- Receipt status tracking
-- File validation
-- Receipt deletion rules
+    - Receipt upload
+    - Receipt metadata
+    - Receipt status tracking
+    - File validation
+    - Receipt deletion rules
 
 ### Storage Module
+
 Responsible for storing and retrieving uploaded files through replaceable storage providers.
 
 Core responsibilities:
-- Object storage abstraction
-- Local/MinIO/S3 implementations
-- Signed download URLs
-- File checksums and metadata
-- Storage cleanup
+    - Object storage abstraction
+    - Local/MinIO/S3 implementations
+    - Signed download URLs
+    - File checksums and metadata
+    - Storage cleanup
 
 ### Processing Module
+
 Responsible for asynchronous workflows that happen outside the HTTP request lifecycle.
 
 Core responsibilities:
-- Publishing processing events
-- Consuming background jobs
-- Retry and failure handling
-- Idempotency
-- Processing status updates
+    - Publishing processing events
+    - Consuming background jobs
+    - Retry and failure handling
+    - Idempotency
+    - Processing status updates
 
 ### OCR Module
+
 Responsible for extracting raw text from uploaded receipts and invoices.
 
 Core responsibilities:
-- OCR provider abstraction
-- OCR result storage
-- OCR confidence tracking
-- OCR error handling
-- Multi-provider support
+    - OCR provider abstraction
+    - OCR result storage
+    - OCR confidence tracking
+    - OCR error handling
+    - Multi-provider support
 
 ### AI Parsing Module
+
 Responsible for converting OCR text into structured expense data.
 
 Core responsibilities:
-- LLM provider abstraction
-- Prompt versioning
-- Structured JSON output
-- Schema validation
-- AI confidence tracking
+    - LLM provider abstraction
+    - Prompt versioning
+    - Structured JSON output
+    - Schema validation
+    - AI confidence tracking
 
 ### Review Module
+
 Responsible for human review when OCR or AI output is incomplete, uncertain, or invalid.
 
 Core responsibilities:
-- Pending review state
-- User correction flow
-- Approval before expense creation
-- Audit trail from OCR to final expense
+    - Pending review state
+    - User correction flow
+    - Approval before expense creation
+    - Audit trail from OCR to final expense
 
 ### Budget Module
+
 Responsible for user budgeting rules and spending limits.
 
 Core responsibilities:
-- Monthly budgets
-- Category budgets
-- Budget usage calculation
-- Budget alerts
+    - Monthly budgets
+    - Category budgets
+    - Budget usage calculation
+    - Budget alerts
 
 ### Analytics Module
+
 Responsible for spending summaries, trends, and financial insights.
 
 Core responsibilities:
-- Daily, weekly, and monthly summaries
-- Category breakdowns
-- Merchant analysis
-- Spending trends
-- AI-assisted insights
+    - Daily, weekly, and monthly summaries
+    - Category breakdowns
+    - Merchant analysis
+    - Spending trends
+    - AI-assisted insights
 
 ### Notification Module
+
 Responsible for notifying users about important events.
 
 Core responsibilities:
-- Processing completed notifications
-- Receipt processing failure alerts
-- Budget threshold alerts
-- Email or in-app notification delivery
+    - Processing completed notifications
+    - Receipt processing failure alerts
+    - Budget threshold alerts
+    - Email or in-app notification delivery
 
 ### Search Module
+
 Responsible for finding expenses and receipts efficiently.
 
 Core responsibilities:
-- Keyword search
-- Merchant search
-- Date range search
-- Category/tag filters
-- Future full-text or AI-assisted search
+    - Keyword search
+    - Merchant search
+    - Date range search
+    - Category/tag filters
+    - Future full-text or AI-assisted search
 
 ### Observability Module
+
 Responsible for making the system understandable in development and production.
 
 Core responsibilities:
-- Structured logging
-- Metrics
-- Tracing
-- Health checks
-- Dashboards
+    - Structured logging
+    - Metrics
+    - Tracing
+    - Health checks
+    - Dashboards
 
 ### Shared Kernel
+
 Contains shared building blocks used across modules.
 
 Core responsibilities:
-- Base entities
-- Domain errors
-- Result types
-- Common validation
-- Date/time abstractions
-- Current user context
-
+    - Base entities
+    - Domain errors
+    - Result types
+    - Common validation
+    - Date/time abstractions
+    - Current user context
 
 ## Development Roadmap
 
 ### Milestone 1 - Backend Foundation
 
 #### Goal
+
 Create a runnable ASP.NET Core backend foundation with:
     - A clean project structure.
     - Database connectivity.
@@ -260,9 +278,11 @@ Create a runnable ASP.NET Core backend foundation with:
     - Local development support.
 
 #### Scope
+
 This milestone does not implement business features yet. It establishes the technical base that future modules will build on.
 
 #### Learning Objectives
+
 - ASP.NET Core Web API Structure.
 - Dependency Injection.
 - EF Core with PostgreSQL.
@@ -272,6 +292,7 @@ This milestone does not implement business features yet. It establishes the tech
 - Docker-based local development
 
 #### Architecture Decisions
+
 - Use a modular monolith as the initial architecture.
 - Separate API, application, domain, and infrastructure concerns.
 - Use PostgreSQL as the primary relational database.
@@ -280,265 +301,288 @@ This milestone does not implement business features yet. It establishes the tech
 - Use Problem Details for standardized API errors.
 
 ## Tasks
+
 Project Setup
-- [x] Create ASP.NET Core Web API project
-- [x] Define solution/project structure
-- [x] Add environment-based configuration
-- [x] Add dependency injection conventions      [Foundation skeleton for later stages as well]
+    - [x] Create ASP.NET Core Web API project
+    - [x] Define solution/project structure
+    - [x] Add environment-based configuration
+    - [x] Add dependency injection conventions      [Foundation skeleton for later stages as well]
 
 Database
-- [x] Add PostgreSQL connection
-- [x] Configure EF Core DbContext class
-- [ ] Create initial migration [Delay to Stage 2]
-- [x] Add database health check
+    - [x] Add PostgreSQL connection
+    - [x] Configure EF Core DbContext class
+    - [ ] Create initial migration [Delay to Stage 2]
+    - [x] Add database health check
 
 API Foundation
-- [x] Add Swagger/OpenAPI
-- [x] Add global exception middleware (app.UseExceptionHandler() is a global exception middleware)
-- [x] Add Problem Details responses
-- [ ] Add request validation foundation [Delay until first request DTO in Auth module]
-- [ ] Add API versioning  [Delay until business endpoints exist]
+    - [x] Add Swagger/OpenAPI
+    - [x] Add global exception middleware (app.UseExceptionHandler() is a global exception middleware)
+    - [x] Add Problem Details responses
+    - [ ] Add request validation foundation [Delay until first request DTO in Auth module]
+    - [ ] Add API versioning  [Delay until business endpoints exist]
 
 Observability
-- [x] Add Serilog
-- [x] Add console logging
-- [ ] Add correlation/request ID logging    [Delay to later stages]
-- [x] Expose /health endpoint
+    - [x] Add Serilog
+    - [x] Add console logging
+    - [ ] Add correlation/request ID logging    [Delay to later stages]
+    - [x] Expose /health endpoint
 
 Local Development
-- [ ] Add Dockerfile [Delay until deployment / containerized API stage]
-- [x] Add docker-compose for PostgreSQL
-- [x] Add README setup instructions
+    - [ ] Add Dockerfile [Delay until deployment / containerized API stage]
+    - [x] Add docker-compose for PostgreSQL
+    - [x] Add README setup instructions
 
-#### Definition of Done:
-- API starts locally.
-- PostgreSQL runs through Docker.
-- EF Core can apply migrations.
-- Swagger is available.
-- Health check confirms database connectivity.
-- Unhandled exceptions return consistent Problem Details responses.
+### Definition of Done
 
-#### Notes:
+    - API starts locally.
+    - PostgreSQL runs through Docker.
+    - EF Core can apply migrations.
+    - Swagger is available.
+    - Health check confirms database connectivity.
+    - Unhandled exceptions return consistent Problem Details responses.
+
+#### Notes
 
 ### Milestone 2 - Identity and Authentication
 
 #### Goal
-Allow users to create an account, authenticate securely, refresh sessions, and access protected API endpoints.
+
+    Allow users to create an account, authenticate securely, refresh sessions, and access protected API endpoints.
 
 #### Scope
-This milestone introduces user identity but does not include profile management, roles beyond a basic authenticated user, or email delivery unless added as optional work.
+
+    This milestone introduces user identity but does not include profile management, roles beyond a basic authenticated user, or email delivery unless added as optional work.
 
 #### Learning Objectives
-- Password hashing
-- JWT access tokens
-- Refresh token lifecycle
-- Claims-based authentication
-- Authorization policies
-- Secure authentication API design
+
+    - Password hashing
+    - JWT access tokens
+    - Refresh token lifecycle
+    - Claims-based authentication
+    - Authorization policies
+    - Secure authentication API design
 
 #### Business Requirements
-- A user can register with email and password.
-- A user can log in and receive an access token and refresh token.
-- A user can refresh an expired access token.
-- A user can log out by revoking their refresh token.
-- Protected endpoints require authentication.
-- Passwords are never stored in plain text.
+
+    - A user can register with email and password.
+    - A user can log in and receive an access token and refresh token.
+    - A user can refresh an expired access token.
+    - A user can log out by revoking their refresh token.
+    - Protected endpoints require authentication.
+    - Passwords are never stored in plain text.
 
 #### API Endpoints
-- [ ] `POST /auth/register`
-- [ ] `POST /auth/login`
-- [ ] `POST /auth/refresh`
-- [ ] `POST /auth/logout`
-- [ ] `GET /auth/me`
+
+- [x] `POST /auth/register`
+- [x] `POST /auth/login`
+- [x] `POST /auth/refresh`
+- [x] `POST /auth/logout`
+- [x] `GET /auth/me`
 
 #### Data Model
+
 User
-- Id
-- Email
-- PasswordHash
-- CreatedAt
-- UpdatedAt
+    - Id
+    - Email
+    - PasswordHash
+    - CreatedAt
+    - UpdatedAt
 
 RefreshToken
-- Id
-- UserId
-- TokenHash
-- ExpiresAt
-- RevokedAt
-- CreatedAt
+    - Id
+    - UserId
+    - TokenHash
+    - ExpiresAt
+    - RevokedAt
+    - CreatedAt
 
 #### Tasks
-- [ ] Create User entity
-- [ ] Create RefreshToken entity
-- [ ] Add registration flow
-- [ ] Add login flow
-- [ ] Add JWT generation
-- [ ] Add refresh token rotation
-- [ ] Add logout/revoke token flow
-- [ ] Add authenticated test endpoint
-- [ ] Add validation for auth requests
-- [ ] Add unit/integration tests for core auth flows
+
+    - [x] Create User entity
+    - [x] Create RefreshToken entity
+    - [x] Add registration flow
+    - [x] Add login flow
+    - [x] Add JWT generation
+    - [x] Add refresh token rotation
+    - [x] Add logout/revoke token flow
+    - [x] Add authenticated test endpoint
+    - [x] Add validation for auth requests
+    - [ ] Add unit/integration tests for core auth flows
 
 #### Definition of Done
-- A new user can register.
-- A registered user can log in.
-- JWT-protected endpoints reject unauthenticated requests.
-- Refresh tokens can issue new access tokens.
-- Logout prevents reuse of the refresh token.
+
+    - A new user can register.
+    - A registered user can log in.
+    - JWT-protected endpoints reject unauthenticated requests.
+    - Refresh tokens can issue new access tokens.
+    - Logout prevents reuse of the refresh token.
 
 ### Milestone 3 - Expense Management Module
 
 #### Goal
+
 Allow authenticated users to manually create, update, search, and organize expenses before introducing receipt upload and AI automation.
 
 #### Scope
+
 This milestone focuses on user-owned expense records. Receipt upload, OCR, AI parsing, and budgeting are handled in later milestones.
 
 #### Learning Objectives
-- Domain modeling
-- User-owned data access
-- CRUD API design
-- Pagination, filtering, and sorting
-- EF Core relationships
-- Database indexes
-- Transaction boundaries
+
+    - Domain modeling
+    - User-owned data access
+    - CRUD API design
+    - Pagination, filtering, and sorting
+    - EF Core relationships
+    - Database indexes
+    - Transaction boundaries
 
 #### Business Requirements
-- A user can create an expense manually.
-- A user can view only their own expenses.
-- A user can update or delete their own expenses.
-- A user can categorize expenses.
-- A user can tag expenses.
-- A user can filter expenses by date, category, merchant, and amount.
-- A user can sort expenses by date, amount, or merchant.
-- Expense amounts must be positive.
-- Expense dates must be valid.
+
+    - A user can create an expense manually.
+    - A user can view only their own expenses.
+    - A user can update or delete their own expenses.
+    - A user can categorize expenses.
+    - A user can tag expenses.
+    - A user can filter expenses by date, category, merchant, and amount.
+    - A user can sort expenses by date, amount, or merchant.
+    - Expense amounts must be positive.
+    - Expense dates must be valid.
 
 #### API Endpoints
-- [ ] `POST /expenses`
-- [ ] `GET /expenses`
-- [ ] `GET /expenses/{id}`
-- [ ] `PUT /expenses/{id}`
-- [ ] `DELETE /expenses/{id}`
-- [ ] `GET /categories`
-- [ ] `POST /categories`
-- [ ] `GET /tags`
-- [ ] `POST /tags`
+
+    - [x] `POST /expenses`
+    - [x] `GET /expenses`
+    - [x] `GET /expenses/{id}`
+    - [x] `PUT /expenses/{id}`
+    - [x] `DELETE /expenses/{id}`
+    - [x] `GET /categories`
+    - [x] `POST /categories`
+    - [x] `GET /tags`
+    - [x] `POST /tags`
 
 #### Data Model
-Expense
-- Id
-- UserId
-- Merchant
-- Amount
-- Currency
-- ExpenseDate
-- CategoryId
-- Notes
-- CreatedAt
-- UpdatedAt
 
-Category
-- Id
-- UserId
-- Name
-- CreatedAt
+    Expense
+        - Id
+        - UserId
+        - Merchant
+        - Amount
+        - Currency
+        - ExpenseDate
+        - CategoryId
+        - Notes
+        - CreatedAt
+        - UpdatedAt
 
-Tag
-- Id
-- UserId
-- Name
+    Category
+        - Id
+        - UserId
+        - Name
+        - CreatedAt
 
-ExpenseTag
-- ExpenseId
-- TagId
+    Tag
+        - Id
+        - UserId
+        - Name
+
+    ExpenseTag
+        - ExpenseId
+        - TagId
 
 #### Tasks
-- [ ] Create Expense entity
-- [ ] Create Category entity
-- [ ] Create Tag entity
-- [ ] Create EF Core relationships
-- [ ] Add expense CRUD endpoints
-- [ ] Add pagination
-- [ ] Add filtering
-- [ ] Add sorting
-- [ ] Add ownership checks
-- [ ] Add indexes for common queries
-- [ ] Add tests for expense rules and user isolation
+
+    - [x] Create Expense entity
+    - [x] Create Category entity
+    - [x] Create Tag entity
+    - [x] Create EF Core relationships
+    - [x] Add expense CRUD endpoints
+    - [x] Add pagination
+    - [x] Add filtering
+    - [x] Add sorting
+    - [x] Add ownership checks
+    - [x] Add indexes for common queries
+    - [ ] Add tests for expense rules and user isolation
 
 #### Definition of Done
-- Authenticated users can manage their own expenses.
-- Users cannot access another user's expenses.
-- Expense list supports pagination, filtering, and sorting.
-- Categories and tags can be assigned to expenses.
-- Core expense validation is covered by tests.
+
+    - Authenticated users can manage their own expenses.
+    - Users cannot access another user's expenses.
+    - Expense list supports pagination, filtering, and sorting.
+    - Categories and tags can be assigned to expenses.
+    - Core expense validation is covered by tests.
 
 ### Milestone 4 - Receipt Upload Module
 
 #### Goal
-Allow users to securely upload receipts (images / PDFs) and register them for processing.
+
+    Allow users to securely upload receipts (images / PDFs) and register them for processing.
 
 #### Learning Objectives
-- Multipart Form Upload.
-- File Streaming.
-- File Validation.
-- Object Metadata.
-- Secure File Handling.
-- File Size Limitation.
-- MIME Type Validation.
+
+    - Multipart Form Upload.
+    - File Streaming.
+    - File Validation.
+    - Object Metadata.
+    - Secure File Handling.
+    - File Size Limitation.
+    - MIME Type Validation.
 
 #### Business Requirements
-- User uploads receipt.
-- Receipt belongs to one user.
-- Receipt can be image or PDF.
-- Receipt status starts as "Pending".
-- Receipt has upload timestamp.
-- Receipt stores original filename.
-- Receipt stores storage path.
-- Receipt can be deleted before processing.
+
+    - User uploads receipt.
+    - Receipt belongs to one user.
+    - Receipt can be image or PDF.
+    - Receipt status starts as "Pending".
+    - Receipt has upload timestamp.
+    - Receipt stores original filename.
+    - Receipt stores storage path.
+    - Receipt can be deleted before processing.
 
 #### Task
-API:
-- [ ] POST /receipts
-- [ ] GET /receipts
-- [ ] GET /receipts/{id}
-- [ ] DELETE /receipts/{id}
 
-Validation:
-- [ ] Validate file exists.
-- [ ] Validate file size.
-- [ ] Validate file extension.
-- [ ] Validate MIME type.
-- [ ] Reject corrupted uploads
+    API:
+    - [x] POST /receipts
+    - [x] GET /receipts
+    - [x] GET /receipts/{id}
+    - [x] DELETE /receipts/{id}
 
-Database:
-    Receipt
-        Id
-        UserId
-        Status
-        OriginalFileName
-        StorageKey
-        ContentType
-        FileSize
-        CreateAt
-        UpdatedAt
+    Validation:
+    - [x] Validate file exists.
+    - [x] Validate file size.
+    - [x] Validate file extension.
+    - [x] Validate MIME type.
+    - [ ] Reject corrupted uploads
 
-Business Logic:
-- [ ] One receipt belongs to one user.
-- [ ] Prevent duplicate uploads (optional hash).
-- [ ] Receipt starts with Pending status.
+    Database:
+        Receipt
+            Id
+            UserId
+            Status
+            OriginalFileName
+            StorageKey
+            ContentType
+            FileSize
+            CreateAt
+            UpdatedAt
 
-Security:
-- [ ] Authorization.
-- [ ] Max upload size.
-- [ ] Sanitize filename.
-- [ ] Virus scan placeholder (future)
+    Business Logic:
+    - [x] One receipt belongs to one user.
+    - [x] Prevent duplicate uploads (optional hash).
+    - [x] Receipt starts with Pending status.
+
+    Security:
+    - [x] Authorization.
+    - [x] Max upload size.
+    - [x] Sanitize filename.
+    - [ ] Virus scan placeholder (future)
 
 #### Definition of Done
-- Upload feature works.
-- Receipt metadate saved.
-- File stored successfully.
-- Validation working.
+
+    - Upload feature works.
+    - Receipt metadate saved.
+    - File stored successfully.
+    - Validation working.
 
 #### Notes
 

@@ -1,6 +1,6 @@
 @expense_management_app_HostAddress = http://localhost:5089
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhYmMxMjNAZXhhbXBsZS5jb20iLCJqdGkiOiI5NjU5NThiZC05ZWI5LTQ3Y2QtYmYyYi1iY2I0Y2Q5YmIyNDQiLCJleHAiOjE3ODY2MDk2MTMsImlzcyI6IkV4cGVuc2VNYW5hZ2VtZW50QXBpIiwiYXVkIjoiRXhwZW5zZU1hbmFnZW1lbnRDbGllbnQifQ.xF_rt1EBoRpnjpS_TvCpRJyhLwepoNg1YDo9pS0YA1U
-@refreshToken = cs2/WWss87RZRG4z5xfUs8bE6voJqihToORMNMT1+8q1xF90g1KffIG+eF5NMjwoRRp7qG2K8/QKFur212EV1Q==
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhYmMxMjNAZXhhbXBsZS5jb20iLCJqdGkiOiIwMTEzZGM2Yi02NjUzLTQ3MDItYWZmYS02YTRjMWIwM2ZlNzkiLCJleHAiOjE3ODcxOTY5NTIsImlzcyI6IkV4cGVuc2VNYW5hZ2VtZW50QXBpIiwiYXVkIjoiRXhwZW5zZU1hbmFnZW1lbnRDbGllbnQifQ.O_k3MiTWjo6WOt_pvodLjq7ZjUPlbJ7f1i0ekrDeNCE
+@refreshToken = 4ku+4czBDjySZ85a+TXSuxRiK7dlkRNODzh/snS9RS6EazMysaTqp1TTtxWrnefh1xO8ZSQ7VlZIbefyJe7IiA==
 
 ### Registeration Method Testing
 POST {{expense_management_app_HostAddress}}/auth/register
@@ -133,3 +133,68 @@ Authorization: Bearer {{accessToken}}
     "notes": "testing",
     "tagIds": [1,2]
 }
+
+### Testing with ReceiptsController.cs
+#### POST /receipts
+
+##### PDF file
+POST {{expense_management_app_HostAddress}}/receipts
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=receiptBoundary
+
+--receiptBoundary
+Content-Disposition: form-data; name="file"; filename="sample_file.pdf"
+Content-Type: application/pdf
+
+< ../test_files/sample_file.pdf
+--receiptBoundary--
+
+##### Upload PNG receipt
+POST {{expense_management_app_HostAddress}}/receipts
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=receiptBoundary
+
+--receiptBoundary
+Content-Disposition: form-data; name="file"; filename="sample_file.png"
+Content-Type: image/png
+
+< ../test_files/sample_file.png
+--receiptBoundary--
+
+### Upload JPG receipt
+POST {{expense_management_app_HostAddress}}/receipts
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=receiptBoundary
+
+--receiptBoundary
+Content-Disposition: form-data; name="file"; filename="sample_file.jpg"
+Content-Type: image/jpeg
+
+< ../test_files/sample_file.jpg
+--receiptBoundary--
+
+##### JPEG
+POST http://localhost:5089/receipts
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=receiptBoundary
+
+--receiptBoundary
+Content-Disposition: form-data; name="file"; filename="sample_file.jpeg"
+Content-Type: image/jpeg
+
+< ../test_files/sample_file.jpg
+--receiptBoundary--
+
+#### GET /receipts
+GET {{expense_management_app_HostAddress}}/receipts
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+#### GET /receipts/{receiptId}
+GET {{expense_management_app_HostAddress}}/receipts/1
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+#### DELETE /receipts/{receiptId}
+DELETE {{expense_management_app_HostAddress}}/receipts/1
+Authorization: Bearer {{accessToken}}

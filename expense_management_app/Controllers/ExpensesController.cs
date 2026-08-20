@@ -406,7 +406,7 @@ public class ExpensesController : ControllerBase
             })
             .ToListAsync();
         
-        // 7. Return List Response
+        // 7. Return List Response for Mapped Expenses
         var response = new ExpenseListResponse
         {
             Items = items,

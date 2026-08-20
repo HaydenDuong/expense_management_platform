@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using expense_management_app.Models.Identity;
 using expense_management_app.Models.Expenses;
+using expense_management_app.Models.Receipts;
 
 namespace expense_management_app.Infrastructure.Persistence;
 
@@ -21,6 +22,9 @@ public class AppDbContext: DbContext
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<ExpenseTag> ExpenseTags => Set<ExpenseTag>();
 
+    // Receipts
+    public DbSet<Receipt> Receipts => Set<Receipt>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // A - For Identity-Related Objects
@@ -39,7 +43,7 @@ public class AppDbContext: DbContext
             // Based on "user.NormalizedEmail" column
             // Prevent email duplication at database level, addition to controlller code in "/Controllers/AuthController.cs"
             entity.HasIndex(user => user.NormalizedEmail)
-            .IsUnique();
+                .IsUnique();
 
             entity.Property(user => user.PasswordHash)
                 .IsRequired();
@@ -245,6 +249,68 @@ public class AppDbContext: DbContext
                 // "Cascade" is fine here because:
                 // Delete tag -> delete its ExpenseTag rows
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // C - For Receipts-Related Object
+        // For Receipt Object
+        modelBuilder.Entity<Receipt>(entity =>
+        {
+            entity.Property(receipt => receipt.Status)
+                .IsRequired();
+            
+            entity.Property(receipt => receipt.OriginalFileName)
+                .IsRequired()
+                .HasMaxLength(320);
+            
+            entity.Property(receipt => receipt.StorageKey)
+                .IsRequired()
+                .HasMaxLength(1024);
+            
+            entity.Property(receipt => receipt.ContentType)
+                .IsRequired()
+                .HasMaxLength(100);
+            
+            entity.Property(receipt => receipt.ContentHash)
+                .IsRequired()
+                .HasMaxLength(64);
+
+            entity.Property(receipt => receipt.FileSize)
+                .IsRequired();
+            
+            entity.Property(receipt => receipt.CreatedAt)
+                .IsRequired();
+            
+            entity.Property(receipt => receipt.UpdatedAt)
+                .IsRequired();
+            
+            // Declare its relationship to AppUser object: One to Many
+            entity.HasOne(receipt => receipt.AppUser)
+                .WithMany(user => user.Receipts)
+                .HasForeignKey(receipt => receipt.AppUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            // Declare its normal query indexes
+            entity.HasIndex(receipt => new
+            {
+                receipt.AppUserId,
+                receipt.CreatedAt
+            });
+
+            entity.HasIndex(receipt => new
+            {
+                receipt.AppUserId,
+                receipt.Status
+            });
+            
+            // Declare its uniqueness index
+            // This ensure that the current user could not upload the same file twice
+            entity.HasIndex(receipt => new
+            {
+                receipt.AppUserId,
+                receipt.ContentHash
+            })
+                .IsUnique();
+
         });
     }
 }

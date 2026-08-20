@@ -14,3 +14,7 @@ Thumbs.db
 
 # Local secrets
 .env
+
+# Folders
+test_files
+uploaded-receipts
