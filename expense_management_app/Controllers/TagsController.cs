@@ -15,36 +15,29 @@ namespace expense_management_app.Controllers;
 [Route("tags")]
 public class TagsController : ControllerBase
 {
-    // Dependencies
     private readonly AppDbContext _context;
     private readonly ILogger<TagsController> _logger;
 
-    // Constructor
     public TagsController(
         AppDbContext context,
         ILogger<TagsController> logger
     )
     {   
-        // Field = injected parameter
         _context = context;
         _logger = logger;
     }
 
-    // Methods
-    // Allow the current user to create a tag
     [HttpPost]
     public async Task<ActionResult<TagResponse>> CreateTag(
         [FromBody] CreateTagRequest request
     )
     {
-        // UserId Validity Check
         if (!TryGetCurrentUserId(out var userId))
         {
             _logger.LogWarning("Request rejected because the subject claim was missing or invalid.");
             return Unauthorized();
         }
 
-        // Validity Check for input tag name
         var normalizedName = request.Name.Trim().ToUpperInvariant();
 
         var tagNameExist = await _context.Tags
@@ -80,7 +73,6 @@ public class TagsController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
-    // Return all the tags created by the current User
     [HttpGet]
     public async Task<ActionResult<List<TagResponse>>> GetTags()
     {
@@ -103,7 +95,6 @@ public class TagsController : ControllerBase
         return Ok(tagsList);
     }
 
-    // UserId Validity Check Helper
     private bool TryGetCurrentUserId(out int userId)
     {
         var userIdValue = User.FindFirstValue(JwtRegisteredClaimNames.Sub);

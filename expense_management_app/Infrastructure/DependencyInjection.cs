@@ -2,8 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using expense_management_app.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using expense_management_app.Models.Identity;
-using expense_management_app.Options;
-using expense_management_app.Services;
+using expense_management_app.Options.Authentication;
+using expense_management_app.Services.Authentication;
+using expense_management_app.Options.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -101,6 +102,15 @@ public static class DependencyInjection
 
         // Allow the adding of [Authorize] to an HTTP endpoint
         services.AddAuthorization();
+
+        // Register of Uploaded File Storage Option
+        services
+            .AddOptions<LocalStorageOptions>()
+            .Bind(configuration.GetSection(LocalStorageOptions.SectionName))
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.RootPath),
+                "Local storage root path is required.")
+            .ValidateOnStart();
 
         return services;
     }

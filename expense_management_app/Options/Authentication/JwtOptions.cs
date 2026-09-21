@@ -1,4 +1,4 @@
-namespace expense_management_app.Options;
+namespace expense_management_app.Options.Authentication;
 
 public class JwtOptions
 {

@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity; // Password Hasher Dependecy
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using expense_management_app.Contracts.Auth;
 using expense_management_app.Models.Identity;
 using expense_management_app.Infrastructure.Persistence;
-using expense_management_app.Services;
-using expense_management_app.Options;
+using expense_management_app.Services.Authentication;
+using expense_management_app.Options.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -50,9 +50,6 @@ public class AuthController : ControllerBase
         _logger.LogInformation("Registration attempt received");
 
         var emailExists = await _context.AppUsers
-            // "AnyAsync" asked the database:
-            // Is there at least one matching row?
-            // It returns: True / False
             .AnyAsync(user => user.NormalizedEmail == normalizedEmail);
         
         if (emailExists)
@@ -97,10 +94,6 @@ public class AuthController : ControllerBase
         _logger.LogInformation("Login attempt received");
 
         var user = await _context.AppUsers
-            // "FirstOrDefaultAsync" returns:
-            // AppUser? user
-            // Either: matching user object or null
-            // => Return the actual record
             .FirstOrDefaultAsync(user => user.NormalizedEmail == normalizedEmail);
         
         if (user is null)
@@ -155,7 +148,6 @@ public class AuthController : ControllerBase
 
         _logger.LogInformation("Login succeeded for user id {UserId}", user.Id);
 
-        // Or return Ok(response);
         return StatusCode(StatusCodes.Status200OK, response); 
     }
     
@@ -170,25 +162,15 @@ public class AuthController : ControllerBase
         // Query for the matching row from RefreshTokens table
         // Also, includes related AppUser info
         var storedRefreshToken = await _context.RefreshTokens
-            
-            // This will include the corresponding AppUser object
-            // throught the stored value in "AppUserId" column of the matching row
             .Include(token => token.AppUser)
             .FirstOrDefaultAsync(token => token.TokenHash == hashedRefreshToken);
         
-        // Validity Checks
-        // 1. Reject if not found
         if (storedRefreshToken is null)
         {
             _logger.LogWarning("Refresh token rejected because it was not found.");
             return Unauthorized();
         }
 
-        // 2. Reject if this token is expired,
-        // or this stored token is not null (null by default upon refresh token creation during login)
-        // Changed from null to a DateTime value after Http POST /auth/refresh
-        // So: RevokedAt = null = this token is still active
-        //     RevokedAt has a DateTime => already used / killed
         var now = DateTime.UtcNow;
 
         if (storedRefreshToken.ExpiresAt <= now || storedRefreshToken.RevokedAt is not null)
@@ -196,18 +178,14 @@ public class AuthController : ControllerBase
             _logger.LogWarning("Refresh token rejected because it expired or already revoked for user id {UserId}", storedRefreshToken.AppUserId);
             return Unauthorized();
         }
-
-        // Revoke this token 
+ 
         storedRefreshToken.RevokedAt = now;
 
-        // Generate a new AccessToken
         var accessToken = _jwtTokenService.GenerateAccessToken(storedRefreshToken.AppUser);
 
-        // Generate a new RefreshToken
         var rawRefreshToken = _refreshTokenService.GenerateRefreshToken();
         var hashRefreshToken = _refreshTokenService.HashRefreshToken(rawRefreshToken);
 
-        // Store the hashed version of the new refresh token into the RefreshTokens table
         var refreshToken = new RefreshToken
         {
             AppUserId = storedRefreshToken.AppUserId,
@@ -221,7 +199,6 @@ public class AuthController : ControllerBase
 
         _logger.LogInformation("Refresh token rotation succeeded for user id {UserId}", storedRefreshToken.AppUserId);
 
-        // Return AuthResponse
         var response = new AuthResponse
         {
             AccessToken = accessToken,
@@ -270,45 +247,18 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    // Authorization HTTP endpoint
-    // ControllerBase gives AuthController access to the following HTTP request properties:
-    // User, Request, Response, HttpContext, ModelState
-    // This endpoint does not take a request DTO.
-    // The caller's identity comes from the Authorization header:
-    //
-    // Authorization: Bearer <accessToken>
-    //
-    // ASP.NET Core JWT middleware validates the token before this action runs.
-    // If the token is valid, it creates HttpContext.User from the JWT claims.
-    // Because AuthController inherits from ControllerBase, we can access HttpContext.User as User.
-    // The "sub" claim contains the AppUser.Id that was written when the access token was generated.
     [Authorize]
     [HttpGet("me")]
     public async Task<ActionResult<AuthUserResponse>> Me()
     {
-        // Because the current code of JWT Service created claim as:
-        // new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
-        // [Cont.] from above: User being used here is shorthanded for HttpContext.User - a ClaimsPrincipal
-        // A "ClaimsPrincipal" represents the authenticated caller
-        // The flow is:
-        // 1. Client sends Authorization: Bearer <access token>
-        // 2. JWT middleware validates token
-        // 3. Middleware creates a ClaimsPrincipal from the token claims
-        // 4. Middleware sets HttpContext.User ~ JWT creates this latter and it contains claims & it exists only for this request
-        // 5. Controller action reads "HttpContext.User" (which is User)
-        // so the following code means: Look at the authenticated caller's claims and find the claim named "sub"
         var userIdValue = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
-        // Validity Check
         if (!int.TryParse(userIdValue, out var userId))
         {
             _logger.LogWarning("Authenticated request rejected because the subject claim was missing or invalid.");
             return Unauthorized();
         }
 
-        // Find this user from the DB, instead of only trusting the token
-        // Because this user might have been deleted / disabled / changed.
-        // For a production-shaped app, it's reasonable for "/auth/me" to fetch the current user data.
         var user = await _context.AppUsers.FindAsync(userId);
 
         if (user is null)
@@ -324,7 +274,7 @@ public class AuthController : ControllerBase
             CreatedAt = user.CreatedAt
         };
 
-        _logger.LogWarning("Current user profile returned for user id {UserId}.", user.Id);
+        _logger.LogInformation("Current user profile returned for user id {UserId}.", user.Id);
         return Ok(response);
     }
 }

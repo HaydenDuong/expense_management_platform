@@ -39,9 +39,6 @@ public class AppDbContext: DbContext
                 .IsRequired()
                 .HasMaxLength(320);
             
-            // This create an unique database index
-            // Based on "user.NormalizedEmail" column
-            // Prevent email duplication at database level, addition to controlller code in "/Controllers/AuthController.cs"
             entity.HasIndex(user => user.NormalizedEmail)
                 .IsUnique();
 
@@ -67,11 +64,6 @@ public class AppDbContext: DbContext
             entity.Property(token => token.ExpiresAt)
                 .IsRequired();
             
-            // This says:
-            // A RefreshToken object is belongs to one AppUser object.
-            // An AppUser object can have many RefreshTokens (List<RefreshToken>)
-            // RefreshToken.AppUserId is the foreign key.
-            // If this user is deleted, their refresh tokens are deleted too
             entity.HasOne(token => token.AppUser)
                 .WithMany(user => user.RefreshTokens)
                 .HasForeignKey(token => token.AppUserId)
@@ -88,10 +80,6 @@ public class AppDbContext: DbContext
             
             entity.Property(expense => expense.Amount)
                 .IsRequired()
-
-                // Total number of digits allowed:
-                // 16 digits before decimal points
-                // 2 digits after decimal points
                 .HasPrecision(18, 2);
             
             entity.Property(expense => expense.Currency)
@@ -121,16 +109,9 @@ public class AppDbContext: DbContext
             entity.HasOne(expense => expense.Category)
                 .WithMany(category => category.Expenses)
                 .HasForeignKey(expense => expense.CategoryId)
-
-                // If a category is deleted, do not delete the expenses.
-                // Just set their "CategoryId" to "NULL"
                 .OnDelete(DeleteBehavior.SetNull);
             
             // "Expense" vs. "Tag": many-to-many
-            // Check below for "ExpenseTag" object
-
-            // Declare indexes for "Expense" object
-            // Query based on UserId and ExpenseDate
             entity.HasIndex(expense => new
             {
                 expense.AppUserId,
@@ -165,10 +146,6 @@ public class AppDbContext: DbContext
             entity.Property(category => category.CreatedAt)
                 .IsRequired();
             
-            // "Category" vs. "User: One-to-Many
-            // One category belongs to one user.
-            // One user can have many categories
-            // Delete User -> Delete their categories
             entity.HasOne(category => category.AppUser)
                 .WithMany(user => user.Categories)
                 .HasForeignKey(category => category.AppUserId)
@@ -180,12 +157,6 @@ public class AppDbContext: DbContext
                 category.AppUserId,
                 category.Name
             })
-
-            // Prevent duplicate category names per user
-            // This means: the same user cannot have 2 categories with the same name
-            // e.g: User 7: Groceries, User 8: Groceries = fine
-            //      User 7: Groceries, User 7: Groceries = is not allow
-            // Note: if not including category.AppUserId => only one user in the entire app could have a "Groceries" category
             .IsUnique();
         });
 
@@ -202,13 +173,11 @@ public class AppDbContext: DbContext
             entity.Property(tag => tag.CreatedAt)
                 .IsRequired();
             
-            // Similar to "Category" above
             entity.HasOne(tag => tag.AppUser)
                 .WithMany(user => user.Tags)
                 .HasForeignKey(tag => tag.AppUserId)
                 .OnDelete(DeleteBehavior.Cascade);
             
-            // Prevent duplicate tag names per user
             entity.HasIndex(tag => new
             {
                 tag.AppUserId,
@@ -222,32 +191,18 @@ public class AppDbContext: DbContext
         {
             entity.HasKey(expenseTag => new
             {
-                // This pair is the primary key
-                // Prevents duplicate tag assignment
                 expenseTag.ExpenseId,
                 expenseTag.TagId
             });
 
-            // Each join-row belongs to one expense
-            // One expense can have many join rows, since
-            // One expense can have many tags
             entity.HasOne(expenseTag => expenseTag.Expense)
                 .WithMany(expense => expense.ExpenseTags)
                 .HasForeignKey(expenseTag => expenseTag.ExpenseId)
-
-                // "Cascade" is fine here because:
-                // Delete expense -> delete its ExpenseTag rows
                 .OnDelete(DeleteBehavior.Cascade);
             
-            // Each join-row belongs to one tag
-            // One Tag can have many join rows, since:
-            // One tag can be used for many expenses
             entity.HasOne(expenseTag => expenseTag.Tag)
                 .WithMany(tag => tag.ExpenseTags)
                 .HasForeignKey(expenseTag => expenseTag.TagId)
-
-                // "Cascade" is fine here because:
-                // Delete tag -> delete its ExpenseTag rows
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -302,8 +257,6 @@ public class AppDbContext: DbContext
                 receipt.Status
             });
             
-            // Declare its uniqueness index
-            // This ensure that the current user could not upload the same file twice
             entity.HasIndex(receipt => new
             {
                 receipt.AppUserId,

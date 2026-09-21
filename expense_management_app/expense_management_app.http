@@ -1,6 +1,6 @@
 @expense_management_app_HostAddress = http://localhost:5089
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhYmMxMjNAZXhhbXBsZS5jb20iLCJqdGkiOiIwMTEzZGM2Yi02NjUzLTQ3MDItYWZmYS02YTRjMWIwM2ZlNzkiLCJleHAiOjE3ODcxOTY5NTIsImlzcyI6IkV4cGVuc2VNYW5hZ2VtZW50QXBpIiwiYXVkIjoiRXhwZW5zZU1hbmFnZW1lbnRDbGllbnQifQ.O_k3MiTWjo6WOt_pvodLjq7ZjUPlbJ7f1i0ekrDeNCE
-@refreshToken = 4ku+4czBDjySZ85a+TXSuxRiK7dlkRNODzh/snS9RS6EazMysaTqp1TTtxWrnefh1xO8ZSQ7VlZIbefyJe7IiA==
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhYmMxMjNAZXhhbXBsZS5jb20iLCJqdGkiOiIwNTA1OWM5Yi1jNTdjLTRhYjEtYTU0My03OGUwZmRmYjViZmIiLCJleHAiOjE3ODczODkwNDUsImlzcyI6IkV4cGVuc2VNYW5hZ2VtZW50QXBpIiwiYXVkIjoiRXhwZW5zZU1hbmFnZW1lbnRDbGllbnQifQ.N_vvBurBTedrDf4xA1a45m_AaKTwmuVkp3taD7DjbT0
+@refreshToken = 1fTn5AXvNaJ9kX0OagR8vytd/meOVFNaxzUzIErdpwbrRsdgRME1vqeI2SliYaM+6q3SwRBz4LK5ZFd+hMxW8A==
 
 ### Registeration Method Testing
 POST {{expense_management_app_HostAddress}}/auth/register
@@ -179,10 +179,10 @@ Authorization: Bearer {{accessToken}}
 Content-Type: multipart/form-data; boundary=receiptBoundary
 
 --receiptBoundary
-Content-Disposition: form-data; name="file"; filename="sample_file.jpeg"
+Content-Disposition: form-data; name="file"; filename="test_file.jpeg"
 Content-Type: image/jpeg
 
-< ../test_files/sample_file.jpg
+< ../test_files/test_file.jpeg
 --receiptBoundary--
 
 #### GET /receipts

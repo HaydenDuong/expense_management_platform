@@ -59,12 +59,6 @@ app.MapControllers();
 // Testing for Serilog with this startup log
 Log.Information("Starting Expense Management API in {Environment} environment", app.Environment.EnvironmentName);
 
-// Temporary endpoint for testing Problem Details
-app.MapGet("/throw", () =>
-{
-    throw new InvalidOperationException("This is a test exception.");
-});
-
 // Maps GET /health so 
 // Docker, monitoring tools, or developers can verify that the API is running
 // and its critical dependencies are healthy

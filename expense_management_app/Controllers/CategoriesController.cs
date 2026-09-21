@@ -15,11 +15,9 @@ namespace expense_management_app.Controllers;
 [Route("categories")]
 public class CategoriesController : ControllerBase
 {
-    // Dependencies
     private readonly AppDbContext _context;
     private readonly ILogger<CategoriesController> _logger;
 
-    // Constructor
     public CategoriesController(
         AppDbContext context,
         ILogger<CategoriesController> logger
@@ -35,14 +33,12 @@ public class CategoriesController : ControllerBase
         [FromBody] CreateCategoryRequest request
     )
     {
-        // UserId Validity Check
         if (!TryGetCurrentUserId(out var userId))
         {
             _logger.LogWarning("Request rejected because the subject claim was missing or invalid.");
             return Unauthorized();
         }
 
-        // Validity Check for input category name 
         var normalizedName = request.Name.Trim().ToUpperInvariant();
 
         var categoryNameExist = await _context.Categories
@@ -78,30 +74,18 @@ public class CategoriesController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
-    // Return list of category name created by the current user
     [HttpGet]
     public async Task<ActionResult<List<CategoryResponse>>> GetCategories()
     {
-        // UserId Validity Check
         if (!TryGetCurrentUserId(out var userId))
         {
             _logger.LogWarning("Request rejected because the subject claim was missing or invalid.");
             return Unauthorized();
         }
 
-        // This lines of code mean:
-        // From Categories Table, find:
-        // rows owned by the current userId
-        // sort by name
-        // turn each Category entity into CategoryResponse
-        // add them to list named categoriesList
         var categoriesList = await _context.Categories
             .Where(category => category.AppUserId == userId)
             .OrderBy(category => category.Name)
-
-            // This is called projection
-            // Instead of returning database entity directly
-            // We shape the API response => The DTO pattern doing its job.
             .Select(category => new CategoryResponse
             {
                 Id = category.Id,
@@ -112,7 +96,6 @@ public class CategoriesController : ControllerBase
         return Ok(categoriesList);
     }
 
-    // UserId Validity Check Helper
     private bool TryGetCurrentUserId(out int userId)
     {
         var userIdValue = User.FindFirstValue(JwtRegisteredClaimNames.Sub);

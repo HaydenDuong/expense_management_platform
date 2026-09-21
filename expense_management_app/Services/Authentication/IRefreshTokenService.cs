@@ -1,4 +1,4 @@
-namespace expense_management_app.Services;
+namespace expense_management_app.Services.Authentication;
 
 public interface IRefreshTokenService
 {
